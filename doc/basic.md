@@ -83,8 +83,6 @@ typedef struct {
 
         /**
          * Data part of packet.
-         * When using the csp_buffer API, the size of the data part is set by
-         * csp_buffer_init(), and can later be accessed by csp_buffer_data_size()
          */
         union {
                 /** Access data as uint8_t. */
@@ -150,7 +148,7 @@ from the connection pool:
 >     `csp_connect()`
 >   - server socket for listening
 >     `csp_socket()`
->   - server accepting an incmoing connection
+>   - server accepting an incoming connection
 >     `csp_accept()`
 
 An applications receive queue is located on the connection and is also
@@ -206,8 +204,8 @@ broken down into following steps:
 When a packet is routed, the destination address is looked up in the
 routing table, which results in a
 `csp_route_t` record. The record contains
-the inteface (`csp_iface_t`) the packet
-is to be send on, and an optional `via`
+the interface (`csp_iface_t`) the packet
+is to be sent on, and an optional `via`
 address. The `via` address is used, when
 the sender cannot direcly reach the receiver on one of its connected
 networks, e.g. sending a packet from the satellite to the ground - the
@@ -225,7 +223,7 @@ time).
 >     fastest lookup, but requires more setup.
 >   - cidr (Classless Inter-Domain Routing): supports a one-to-many
 >     mapping, meaning routes can be configued for a range of
->     destianation addresses. The `cidr` is
+>     destination addresses. The `cidr` is
 >     a bit slower for lookup, but simple to setup.
 
 Routes can be configured using text strings in the format:
@@ -238,7 +236,7 @@ Routes can be configured using text strings in the format:
 >     matched. mask = 1 will only match the MSB bit, mask = 2 will match
 >     2 MSB bits. Mask values different from 0 and 5, is only supported
 >     by the cidr rtable.
->   - interface name: name of the interface to route the packet on
+>   - interface name: name of the interface to route the packet on.
 >   - via (optional) address: if different from 255, route the packet to
 >     the `via` address, instead of the
 >     address in the CSP header.
@@ -273,7 +271,6 @@ struct csp_iface_s {
 	void * interface_data;      // Interface data, only known/used by the interface layer, e.g. state information.
 	void * driver_data;         // Driver data, only known/used by the driver layer, e.g. device/channel references.
 	nexthop_t nexthop;          // Next hop (Tx) function
-	uint16_t mtu;               // Maximum Transmission Unit of interface
 	uint8_t split_horizon_off;  // Disable the route-loop prevention
 	uint32_t tx;                // Successfully transmitted packets
 	uint32_t rx;                // Successfully received packets
@@ -311,7 +308,7 @@ free the packet. In case of failure, the packet must not be freed by the
 interface. The original idea was, that the packet could be retried later
 on, without having to re-create the packet again. However, the current
 implementation does not yet fully support this as some interfaces
-modifies header (endian conversion) or data (adding CRC32).
+modify the header (endian conversion) or data (adding CRC32).
 
 ### Receive
 
