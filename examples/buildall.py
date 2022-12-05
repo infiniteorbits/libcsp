@@ -5,7 +5,7 @@ import subprocess
 import argparse
 
 
-DEFAULT_BUILD_SYSTEM = 'waf'
+DEFAULT_BUILD_SYSTEM = 'meson'
 
 
 def build_with_meson():

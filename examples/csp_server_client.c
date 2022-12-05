@@ -6,6 +6,7 @@
 #include <csp/csp.h>
 #include <csp/drivers/usart.h>
 #include <csp/drivers/can_socketcan.h>
+#include <csp/drivers/can_polarfire.h>
 #include <csp/interfaces/csp_if_zmqhub.h>
 
 
@@ -145,9 +146,11 @@ int main(int argc, char * argv[]) {
 #if (CSP_HAVE_LIBZMQ)
     const char * zmq_device = NULL;
 #endif
+    /**Need to create Flag  in Meson build to check the the SOC*/
+    const char * polarfire_device = NULL;
     const char * rtable = NULL;
     int opt;
-    while ((opt = getopt(argc, argv, "a:d:r:c:k:z:tR:h")) != -1) {
+    while ((opt = getopt(argc, argv, "a:d:r:c:k:z:tR:h:p")) != -1) {
         switch (opt) {
             case 'a':
                 address = atoi(optarg);
@@ -168,6 +171,9 @@ int main(int argc, char * argv[]) {
                 zmq_device = optarg;
                 break;
 #endif
+            case 'p':
+                polarfire_device = "can@2010c000";
+                break;
             case 't':
                 test_mode = true;
                 break;
@@ -231,6 +237,15 @@ int main(int argc, char * argv[]) {
         }
     }
 #endif
+
+/**Polarire CAN Interface**/
+if (polarfire_device) {
+        int error = polarfire_CAN_open_and_add_interface(polarfire_device, CSP_IF_CAN_DEFAULT_NAME, 1000000, true , &default_iface);
+        if (error != CSP_ERR_NONE) {
+            csp_print("failed to add CAN interface [%s], error: %d\n", can_device, error);
+            exit(1);
+        }
+    }
 
     if (rtable) {
         int error = csp_rtable_load(rtable);

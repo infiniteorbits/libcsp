@@ -103,3 +103,24 @@ if get_option('enable_python3_bindings')
                     	dependencies : [csp_dep, pydep],
                     	install : true)
 endif
+
+executable('csp_server_client',
+	['examples/csp_server_client.c', 'examples/csp_server_client_posix.c'],
+	include_directories : csp_inc,
+	c_args : csp_c_args,
+	dependencies : csp_dep,
+	build_by_default : true)
+
+executable('csp_arch',
+	'examples/csp_arch.c',
+	include_directories : csp_inc,
+	c_args : csp_c_args,
+	dependencies :  csp_dep,
+	build_by_default : true)
+
+executable('zmqproxy',
+	'examples/zmqproxy.c',
+	include_directories : csp_inc,
+	c_args : csp_c_args,
+	dependencies : csp_dep,
+	build_by_default : true)
